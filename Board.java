@@ -1,10 +1,12 @@
 package Tetris;
 
+import java.util.Arrays;
+
 public class Board {
     private final int height;
     private final int width;
 
-    private final int[][] grid = new int[24][10];
+    public final int[][] grid = new int[24][10];
 
 
     //The height is 24, so that the object can be created at that height and start falling down
@@ -27,11 +29,40 @@ public class Board {
 
     public void gridCreation() {
 
-        for (int i = 0; i < this.height; i++) {
-            for (int j = 0; j < this.width; j++) {
-                this.grid[i][j] = 0;
+        for (int rows = 0; rows < this.height; rows++) {
+            for (int cols = 0; cols < this.width; cols++) {
+                this.grid[rows][cols] = 1;
             }
         }
+    }
+
+    public void clearRows() {
+
+        boolean rowIsFilled = true;
+        //Indication of at which row is filled
+
+
+        for(int row = 0; row < this.height; row++) {
+            for(int col = 0; col < this.width; col++) {
+
+                if(this.grid[row][col] == 0) {
+                    rowIsFilled = false;
+                }
+            }
+
+            if(rowIsFilled) {
+                Arrays.fill(this.grid[row], 0);
+            }
+        }
+
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
     }
 
     public String toString() {
@@ -41,15 +72,6 @@ public class Board {
 
 }
 
-//
-//    public static void main(String[] args) {
-//        Board b = new Board();
-//
-//        for(int i = 0; i < b.grid.length; i++) {
-//            for(int j = 0; j < b.grid[i].length; j++) {
-//                System.out.print(b.grid[i][j] + " ");
-//            }
-//            System.out.println();
-//        }
-//    }
 
+
+//TODO: Shape out of the boarder when rotated
