@@ -61,23 +61,29 @@ public class Tetromino {
 
 
     public void rotateClockwise() {
-        if(positions.length != 1) {
-            if(index == positions.length-1) {
-                stateOfTetrimono = positions[0];
-            } else {
-                stateOfTetrimono = positions[++index];
+        if(height < board.getWidth()-Position.getY()) {
+            if(positions.length != 1) {
+                if(index == positions.length-1) {
+                    stateOfTetrimono = positions[0];
+                } else {
+                    stateOfTetrimono = positions[++index];
+                }
             }
         }
+
     }
 
     public void rotateAntiClockwise() {
-        if(positions.length != 1) {
-            if(index == 0) {
-                stateOfTetrimono = positions[positions.length-1];
-            } else {
-                stateOfTetrimono = positions[--index];
+        if(height < board.getWidth()-Position.getY()) {
+            if(positions.length != 1) {
+                if(index == 0) {
+                    stateOfTetrimono = positions[positions.length-1];
+                } else {
+                    stateOfTetrimono = positions[--index];
+                }
             }
         }
+
     }
 
     public void moveLeft() {
