@@ -22,6 +22,7 @@ public class Tetromino {
         this.color = randomColor();
         this.Position = initialPosition();
     }
+    //sets width and height according to the shape
     private void setWidthAndHeight(int[][] stateOfTetrimono) {
         int maxWidth = stateOfTetrimono[0].length;
         for(int i = 1; i < stateOfTetrimono.length;i++) {
@@ -33,6 +34,7 @@ public class Tetromino {
         this.height = stateOfTetrimono.length;
     }
 
+    //randomly generate the initial state of tetromino
     private int[][] initialStateOfTetrimono() {
         index = randomNumberGenerator.nextInt(positions.length);
         return positions[index];
@@ -40,19 +42,23 @@ public class Tetromino {
 
     Color[] colors = new Color[]{Color.cyan,Color.blue,Color.orange,Color.yellow, Color.green, Color.pink, Color.red};
 
+    //randomly generates the color of tetromino
     private Color randomColor() {
         int number = randomNumberGenerator.nextInt(colors.length);
         return colors[number];
     }
 
+    //randomly generates the initial position of tetromino
     private Point initialPosition() {
         int y = randomNumberGenerator.nextInt(board.getWidth()-width+1);
         return new Point(0,y);
     }
 
+    //randomly generates the shape of tetromino
     private Shape randomShape() {
         return Shape.getRandomShape();
     }
+
 
     public void rotateClockwise() {
         if(positions.length != 1) {
