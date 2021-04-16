@@ -60,42 +60,56 @@ public class Tetromino {
     }
 
 
-    public void rotateClockwise() {
+    //TODO: correct rotate center
+
+    public void rotateClockwise() { //does nothing if it is impossible to rotate
         if(height < board.getWidth()-Position.getY()) {
             if(positions.length != 1) {
                 if(index == positions.length-1) {
                     stateOfTetrimono = positions[0];
+                    setWidthAndHeight(stateOfTetrimono);
                 } else {
                     stateOfTetrimono = positions[++index];
+                    setWidthAndHeight(stateOfTetrimono);
                 }
             }
         }
-
     }
 
-    public void rotateAntiClockwise() {
+    public void rotateAntiClockwise() { //does nothing if it is impossible to rotate
         if(height < board.getWidth()-Position.getY()) {
             if(positions.length != 1) {
                 if(index == 0) {
                     stateOfTetrimono = positions[positions.length-1];
+                    setWidthAndHeight(stateOfTetrimono);
                 } else {
                     stateOfTetrimono = positions[--index];
+                    setWidthAndHeight(stateOfTetrimono);
                 }
             }
         }
-
     }
 
-    public void moveLeft() {
+    public void moveLeft() { //does nothing if it is impossible to move left
         if(Position.getY() != 0) {
             Position = new Point(Position.getX(), Position.getY()-1 );
         }
     }
     public void moveRight() {
-        if(width < board.getWidth()-Position.getY()) {
+        if(width < board.getWidth()-Position.getY()) { //does nothing if it is impossible to move right
             Position = new Point(Position.getX(), Position.getY()+1 );
         }
     }
+
+    public void moveDown() {
+        //TODO: check whether it has met another tetromino
+        Position = new Point(Position.getX()+1, Position.getY());
+    }
+
+    //TODO: check if one tetromino meets another tetromino
+    //TODO: add hard drop and gradually drop
+
+
 
 
 }
