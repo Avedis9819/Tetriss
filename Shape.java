@@ -1,3 +1,5 @@
+package Tetris;
+
 import java.util.Random;
 public enum Shape { //Do not have figures that have all 0s in the first row
     I_SHAPE(new int[][][]{{{1,1,1,1}}, {{1},{1},{1},{1}}}),

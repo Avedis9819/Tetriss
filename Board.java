@@ -1,28 +1,17 @@
+package Tetris;
+
 import java.util.Arrays;
 
 public class Board {
-    public final int height;
-    public final int width;
+    public final int height = 24;
+    public final int width = 10;
 
     public final int[][] grid = new int[24][10];
 
 
     //The height is 24, so that the object can be created at that height and start falling down
     public Board() {
-        this.height = 24;
-        this.width = 10;
         gridCreation();
-    }
-
-    public Board(int width, int height) {
-        this.width = width;
-        this.height = height;
-        gridCreation();
-    }
-
-    public Board(Board board) {
-        this.height = board.height;
-        this.width = board.width;
     }
 
     public void gridCreation() {
@@ -54,14 +43,9 @@ public class Board {
 
     }
 
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getWidth() {
-        return width;
-    }
+    //TODO: Check for collisions
+    // TODO: Check for collisions
+    // TODO: Check for collisions
 
     public String toString() {
         return "This board has height of " + height +

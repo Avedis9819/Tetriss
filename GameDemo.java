@@ -1,3 +1,5 @@
+package Tetris;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -8,7 +10,7 @@ public class GameDemo {
         Game game = new Game(board);
 
         //creates dynamic array of tetromino
-        ArrayList<Tetromino> tetrominos = new ArrayList<>();
+        ArrayList<Tetromino> tetrominos = new ArrayList<Tetromino>();
         Tetromino tetromino = new Tetromino(board);
         tetrominos.add(tetromino);
 

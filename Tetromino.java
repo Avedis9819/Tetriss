@@ -1,3 +1,5 @@
+package Tetris;
+
 import java.util.Random;
 import java.awt.Color;
 
@@ -50,7 +52,7 @@ public class Tetromino {
 
     //randomly generates the initial position of tetromino
     private Point initialPosition() {
-        int y = randomNumberGenerator.nextInt(board.getWidth()-width+1);
+        int y = randomNumberGenerator.nextInt(board.width-width+1);
         return new Point(0,y);
     }
 
@@ -63,7 +65,7 @@ public class Tetromino {
     //TODO: correct rotate center
 
     public void rotateClockwise() { //does nothing if it is impossible to rotate
-        if(height < board.getWidth()-Position.getY()) {
+        if(height < board.width-Position.getY()) {
             if(positions.length != 1) {
                 if(index == positions.length-1) {
                     stateOfTetrimono = positions[0];
@@ -77,7 +79,7 @@ public class Tetromino {
     }
 
     public void rotateAntiClockwise() { //does nothing if it is impossible to rotate
-        if(height < board.getWidth()-Position.getY()) {
+        if(height < board.width-Position.getY()) {
             if(positions.length != 1) {
                 if(index == 0) {
                     stateOfTetrimono = positions[positions.length-1];
@@ -96,7 +98,7 @@ public class Tetromino {
         }
     }
     public void moveRight() {
-        if(width < board.getWidth()-Position.getY()) { //does nothing if it is impossible to move right
+        if(width < board.width-Position.getY()) { //does nothing if it is impossible to move right
             Position = new Point(Position.getX(), Position.getY()+1 );
         }
     }
