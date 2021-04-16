@@ -63,31 +63,46 @@ public class Tetromino {
 
 
     //TODO: correct rotate center
+    //TODO: correct rotation issue (calling to rotate to the same direction several time)
 
     public void rotateClockwise() { //does nothing if it is impossible to rotate
         if(height < board.width-Position.getY()) {
-            if(positions.length != 1) {
+            if(positions.length > 2) {
                 if(index == positions.length-1) {
                     stateOfTetrimono = positions[0];
-                    setWidthAndHeight(stateOfTetrimono);
                 } else {
                     stateOfTetrimono = positions[++index];
-                    setWidthAndHeight(stateOfTetrimono);
                 }
+                setWidthAndHeight(stateOfTetrimono);
+            }
+            else if (positions.length == 2) {
+                if(index == 0) {
+                    stateOfTetrimono = positions[1];
+                } else {
+                    stateOfTetrimono = positions[0];
+                }
+                setWidthAndHeight(stateOfTetrimono);
             }
         }
     }
 
     public void rotateAntiClockwise() { //does nothing if it is impossible to rotate
         if(height < board.width-Position.getY()) {
-            if(positions.length != 1) {
+            if(positions.length > 2) {
                 if(index == 0) {
                     stateOfTetrimono = positions[positions.length-1];
-                    setWidthAndHeight(stateOfTetrimono);
                 } else {
                     stateOfTetrimono = positions[--index];
-                    setWidthAndHeight(stateOfTetrimono);
                 }
+                setWidthAndHeight(stateOfTetrimono);
+            }
+            else if(positions.length == 2) {
+                if(index == 0) {
+                    stateOfTetrimono = positions[1];
+                } else {
+                    stateOfTetrimono = positions[0];
+                }
+                setWidthAndHeight(stateOfTetrimono);
             }
         }
     }
