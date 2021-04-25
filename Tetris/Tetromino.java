@@ -12,27 +12,27 @@ public class Tetromino {
     Color color;
     int index;
     int[][][] positions;
-    int[][] stateOfTetrimono;
+    int[][] stateOfTetromino;
     Point Position;
 
     public Tetromino(Board board) {
         this.board = board;
         this.shape = randomShape();
         this.positions = shape.coordinates;
-        this.stateOfTetrimono = initialStateOfTetrimono();
-        setWidthAndHeight(stateOfTetrimono);
+        this.stateOfTetromino = initialStateOfTetrimono();
+        setWidthAndHeight(stateOfTetromino);
         this.color = randomColor();
         this.Position = initialPosition();
     }
     //sets width and height according to the shape
     private void setWidthAndHeight(int[][] stateOfTetrimono) {
-        int maxWidth = stateOfTetrimono[0].length;
-        for(int i = 1; i < stateOfTetrimono.length;i++) {
-            if(stateOfTetrimono[i].length > maxWidth) {
-                maxWidth = stateOfTetrimono[i].length;
-            }
-        }
-        this.width = maxWidth;
+//        int maxWidth = ;
+//        for(int i = 1; i < stateOfTetrimono.length;i++) {
+//            if(stateOfTetrimono[i].length > maxWidth) {
+//                maxWidth = stateOfTetrimono[i].length;
+//            }
+//        }
+        this.width = stateOfTetrimono[0].length;
         this.height = stateOfTetrimono.length;
     }
 
@@ -66,61 +66,63 @@ public class Tetromino {
     //TODO: correct rotation issue (calling to rotate to the same direction several time)
 
     public void rotateClockwise() { //does nothing if it is impossible to rotate
-        if(height < board.width-Position.getY()) {
-            if(positions.length > 2) {
-                if(index == positions.length-1) {
-                    stateOfTetrimono = positions[0];
-                } else {
-                    stateOfTetrimono = positions[++index];
+        if(!board.checkCollision(this)) {
+            if(height < board.width-Position.getY()) {
+                if(positions.length > 1) {
+                    if(index == positions.length-1) {
+                        index = 0;
+                    } else {
+                        ++index;
+                    }
+                    stateOfTetromino = positions[index];
+                    setWidthAndHeight(stateOfTetromino);
                 }
-                setWidthAndHeight(stateOfTetrimono);
-            }
-            else if (positions.length == 2) {
-                if(index == 0) {
-                    stateOfTetrimono = positions[1];
-                } else {
-                    stateOfTetrimono = positions[0];
-                }
-                setWidthAndHeight(stateOfTetrimono);
             }
         }
+
     }
 
     public void rotateAntiClockwise() { //does nothing if it is impossible to rotate
-        if(height < board.width-Position.getY()) {
-            if(positions.length > 2) {
-                if(index == 0) {
-                    stateOfTetrimono = positions[positions.length-1];
-                } else {
-                    stateOfTetrimono = positions[--index];
+        if(!board.checkCollision(this)) {
+            if(height < board.width-Position.getY()) {
+                if(positions.length > 1) {
+                    if(index == 0) {
+                        index = positions.length -1;
+                    } else {
+                        --index;
+                    }
+                    stateOfTetromino = positions[index];
+                    setWidthAndHeight(stateOfTetromino);
                 }
-                setWidthAndHeight(stateOfTetrimono);
-            }
-            else if(positions.length == 2) {
-                if(index == 0) {
-                    stateOfTetrimono = positions[1];
-                } else {
-                    stateOfTetrimono = positions[0];
-                }
-                setWidthAndHeight(stateOfTetrimono);
             }
         }
+
     }
 
     public void moveLeft() { //does nothing if it is impossible to move left
-        if(Position.getY() != 0) {
-            Position = new Point(Position.getX(), Position.getY()-1 );
+        if(!board.checkCollision(this)) {
+            if(Position.getY() != 0) {
+                Position = new Point(Position.getX(), Position.getY()-1 );
+            }
         }
+        //TODO:check if another figure is on the left
     }
     public void moveRight() {
-        if(width < board.width-Position.getY()) { //does nothing if it is impossible to move right
-            Position = new Point(Position.getX(), Position.getY()+1 );
+        if(!board.checkCollision(this)) {
+            if(width < board.width-Position.getY()) { //does nothing if it is impossible to move right
+                Position = new Point(Position.getX(), Position.getY()+1 );
+            }
         }
     }
 
-    public void moveDown() {
-        //TODO: check whether it has met another tetromino
-        Position = new Point(Position.getX()+1, Position.getY());
+    public boolean moveDown() {
+        boolean hasMoved = false;
+        if(!(board.checkCollision(this))) {
+            //TODO: check whether it has met another tetromino
+            Position = new Point(Position.getX() + 1, Position.getY()); //revise X and Y
+            hasMoved = true;
+        }
+        return hasMoved;
     }
 
     //TODO: check if one tetromino meets another tetromino

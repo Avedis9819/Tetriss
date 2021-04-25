@@ -37,15 +37,36 @@ public class Board {
             }
 
             if(rowIsFilled) {
-                Arrays.fill(this.grid[row], 0);
+                for(int col = row; col > 0;--col) {
+                    System.arraycopy(this.grid[col-1],0,this.grid[col],0,width);
+                }
+
+                Arrays.fill(this.grid[0], 0);
             }
         }
 
     }
 
     //TODO: Check for collisions
-    // TODO: Check for collisions
-    // TODO: Check for collisions
+
+    public boolean checkCollision(Tetromino tetromino) {
+        boolean collisionOccurred = false;
+        for(int i = 0; i < tetromino.stateOfTetromino.length; i++) {
+            for (int j = 0; j < tetromino.stateOfTetromino[i].length; j++) {
+                if(tetromino.Position.getX() >= height - tetromino.height) {
+                    collisionOccurred = true;
+                }
+                if (tetromino.stateOfTetromino[i][j] != 0) {
+                    if(grid[i+1][j] == 1) {
+                        collisionOccurred = true;
+                    }
+
+                    //TODO: Check whether it works properly - It doesn't
+                }
+            }
+        }
+        return collisionOccurred;
+    }
 
     public String toString() {
         return "This board has height of " + height +
@@ -59,6 +80,7 @@ public class Board {
             }
             System.out.println();
         }
+        System.out.println();
     }
 
 }
