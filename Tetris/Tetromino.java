@@ -1,45 +1,97 @@
-package Tetris;
+package Tetris.Tetris;
 
 import java.util.Random;
 import java.awt.Color;
 
-public class Tetromino {
+public class Tetromino   {
     Random randomNumberGenerator = new Random();
     Shape shape;
-    Board board;
     int height;
     int width;
+    int BOARD_WIDTH = 10;
+    int BOARD_HEIGHT = 20;
+    //TODO: decide how to change the currShapeX and currShapeY properly
+    int currShapeX;
+    int currShapeY;
+    int[] numberOfNonZerosWidth;
+    int[] numberOfNonZerosHeight;
     Color color;
     int index;
     int[][][] positions;
     int[][] stateOfTetromino;
-    Point Position;
 
-    public Tetromino(Board board) {
-        this.board = board;
-        this.shape = randomShape();
+    public Tetromino() {
+        this.shape = Shape.T_SHAPE;
+//        this.shape = randomShape();
         this.positions = shape.coordinates;
         this.stateOfTetromino = initialStateOfTetrimono();
-        setWidthAndHeight(stateOfTetromino);
+        setWidthAndHeight();
         this.color = randomColor();
-        this.Position = initialPosition();
+        this.currShapeX = 4; //change to 4 later
+        this.currShapeY = 0;
     }
     //sets width and height according to the shape
-    private void setWidthAndHeight(int[][] stateOfTetrimono) {
-//        int maxWidth = ;
-//        for(int i = 1; i < stateOfTetrimono.length;i++) {
-//            if(stateOfTetrimono[i].length > maxWidth) {
-//                maxWidth = stateOfTetrimono[i].length;
-//            }
-//        }
-        this.width = stateOfTetrimono[0].length;
-        this.height = stateOfTetrimono.length;
+    void setWidthAndHeight() {
+        int r = stateOfTetromino.length;
+        int c = stateOfTetromino[0].length;
+
+        int[] h = new int[r];
+        int[] w = new int[c];
+
+        for (int i = 0; i < r; i++) {
+            int count = 0;
+            for (int j = 0; j < c; j++) {
+                if(stateOfTetromino[i][j] != 0) {
+                    w[j] += 1;
+                    count += 1;
+                }
+            }
+            h[i] = count;
+        }
+
+        this.numberOfNonZerosWidth = w;
+        this.numberOfNonZerosHeight = h;
+
+        int width = w.length;
+        int height = h.length;
+        for(int i: w) {
+            if(i == 0) {
+                width--;
+            }
+        }
+
+        for(int i: h) {
+            if(i == 0) {
+                height--;
+            }
+        }
+        this.width = width;
+        this.height = height;
+//        this.width = c;
+//        this.height = r;
     }
 
+    public boolean areSidesZeros(char side) {
+        if(side == 'r') {
+            return numberOfNonZerosWidth[numberOfNonZerosWidth.length-1] == 0;
+        } else if( side == 'l') {
+            return numberOfNonZerosWidth[0] == 0;
+        } else if(side == 'd') {
+            return (numberOfNonZerosHeight[numberOfNonZerosWidth.length-1] == 0) || (numberOfNonZerosHeight[numberOfNonZerosWidth.length-2] == 0);
+        }
+//        if(numberOfNonZerosWidth[0] == 0 || numberOfNonZerosWidth[2] == 0 || numberOfNonZerosHeight[0] == 0 || numberOfNonZerosHeight[2] == 0) {
+//            return true;
+//        }
+        return false;
+    }
     //randomly generate the initial state of tetromino
     private int[][] initialStateOfTetrimono() {
         index = randomNumberGenerator.nextInt(positions.length);
         return positions[index];
+    }
+
+    public int[][] getStateOfTetromino() {
+        return stateOfTetromino;
     }
 
     Color[] colors = new Color[]{Color.cyan,Color.blue,Color.orange,Color.yellow, Color.green, Color.pink, Color.red};
@@ -50,11 +102,6 @@ public class Tetromino {
         return colors[number];
     }
 
-    //randomly generates the initial position of tetromino
-    private Point initialPosition() {
-        int y = randomNumberGenerator.nextInt(board.width-width+1);
-        return new Point(0,y);
-    }
 
     //randomly generates the shape of tetromino
     private Shape randomShape() {
@@ -64,10 +111,10 @@ public class Tetromino {
 
     //TODO: correct rotate center
     //TODO: correct rotation issue (calling to rotate to the same direction several time)
-
+//
     public void rotateClockwise() { //does nothing if it is impossible to rotate
-        if(!board.checkCollision(this)) {
-            if(height < board.width-Position.getY()) {
+        if(currShapeX >= 5) {
+            if(height/2 <= BOARD_WIDTH-currShapeX-1) { //changed /2
                 if(positions.length > 1) {
                     if(index == positions.length-1) {
                         index = 0;
@@ -75,16 +122,29 @@ public class Tetromino {
                         ++index;
                     }
                     stateOfTetromino = positions[index];
-                    setWidthAndHeight(stateOfTetromino);
+                    setWidthAndHeight();
+                }
+            }
+        } else {
+            if((height/2 <= currShapeX)) { //changed /2
+                if(positions.length > 1) {
+                    if(index == positions.length-1) {
+                        index = 0;
+                    } else {
+                        ++index;
+                    }
+                    stateOfTetromino = positions[index];
+                    setWidthAndHeight();
                 }
             }
         }
 
     }
 
+    //TODO: Delete anticlockwise and replace it with hard drop
     public void rotateAntiClockwise() { //does nothing if it is impossible to rotate
-        if(!board.checkCollision(this)) {
-            if(height < board.width-Position.getY()) {
+        if(currShapeX >= 5) {
+            if((height/2 < BOARD_WIDTH - currShapeX)) { //changed /2
                 if(positions.length > 1) {
                     if(index == 0) {
                         index = positions.length -1;
@@ -92,41 +152,28 @@ public class Tetromino {
                         --index;
                     }
                     stateOfTetromino = positions[index];
-                    setWidthAndHeight(stateOfTetromino);
+                    setWidthAndHeight();
+                }
+            }
+        } else {
+            if((height/2 <= currShapeX)) { //changed /2
+                if(positions.length > 1) {
+                    if(index == 0) {
+                        index = positions.length -1;
+                    } else {
+                        --index;
+                    }
+                    stateOfTetromino = positions[index];
+                    setWidthAndHeight();
                 }
             }
         }
+//        || (height/2 < currShapeX-1)
 
     }
 
-    public void moveLeft() { //does nothing if it is impossible to move left
-        if(!board.checkCollision(this)) {
-            if(Position.getY() != 0) {
-                Position = new Point(Position.getX(), Position.getY()-1 );
-            }
-        }
-        //TODO:check if another figure is on the left
-    }
-    public void moveRight() {
-        if(!board.checkCollision(this)) {
-            if(width < board.width-Position.getY()) { //does nothing if it is impossible to move right
-                Position = new Point(Position.getX(), Position.getY()+1 );
-            }
-        }
-    }
 
-    public boolean moveDown() {
-        boolean hasMoved = false;
-        if(!(board.checkCollision(this))) {
-            //TODO: check whether it has met another tetromino
-            Position = new Point(Position.getX() + 1, Position.getY()); //revise X and Y
-            hasMoved = true;
-        }
-        return hasMoved;
-    }
-
-    //TODO: check if one tetromino meets another tetromino
-    //TODO: add hard drop and gradually drop
+    //TODO: add hard drop
 
 
 

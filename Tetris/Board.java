@@ -1,35 +1,44 @@
-package Tetris;
 
+package Tetris.Tetris;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
 
-public class Board {
-    public final int height = 24;
-    public final int width = 10;
+public class Board extends JPanel implements ActionListener {
 
-    public final int[][] grid = new int[24][10];
+    public final int height;
+    public final int width;
+    public final int[][] grid;
+    private final int squareSize;
+    public Tetromino currentTetromino;
+    private Timer timer;
+    private int prevShapeY;
+    private int prevShapeX;
+    private boolean collided = false;
 
 
-    //The height is 24, so that the object can be created at that height and start falling down
     public Board() {
-        gridCreation();
+        this.setLayout(null);
+        this.height = 20;
+        this.width = 10;
+        this.grid =  new int[this.width][this.height];
+        this.squareSize = 30;
+        this.currentTetromino = new Tetromino();
+
+        timer = new Timer(800, this);
+        timer.start();
+
     }
 
-    public void gridCreation() {
-
-        for (int rows = 0; rows < this.height; rows++) {
-            for (int cols = 0; cols < this.width; cols++) {
-                this.grid[rows][cols] = 0;
-            }
-        }
-    }
-
-    //TODO: correct clearRows
+    //TODO: correct clearRows - DONE - should be checked
     public void clearRows() {
         boolean rowIsFilled = true;
         //Indication of at which row is filled
 
-        for(int row = 0; row < this.height; row++) {
-            for(int col = 0; col < this.width; col++) {
+        for(int row = 0; row <= this.height; row++) {
+            for(int col = 0; col <= this.width; col++) {
                 if(this.grid[row][col] == 0) {
                     rowIsFilled = false;
                     break;
@@ -47,40 +56,96 @@ public class Board {
 
     }
 
-    //TODO: Check for collisions
 
-    public boolean checkCollision(Tetromino tetromino) {
+    public boolean checkCollision() {
         boolean collisionOccurred = false;
-        for(int i = 0; i < tetromino.stateOfTetromino.length; i++) {
-            for (int j = 0; j < tetromino.stateOfTetromino[i].length; j++) {
-                if(tetromino.Position.getX() >= height - tetromino.height) {
-                    collisionOccurred = true;
-                }
-                if (tetromino.stateOfTetromino[i][j] != 0) {
-                    if(grid[i+1][j] == 1) {
-                        collisionOccurred = true;
-                    }
-
-                    //TODO: Check whether it works properly - It doesn't
-                }
-            }
+//        height/2 < BOARD_WIDTH - currShapeX
+        //
+        if(currentTetromino.height/2 + (currentTetromino.currShapeY == height -1 ?1:0) >= height - this.currentTetromino.currShapeY || (currentTetromino.currShapeY == height - currentTetromino.height/2-1 && !currentTetromino.areSidesZeros('d'))) { //changed -1
+            collisionOccurred = true;
         }
+//        for(int i = 0; i < currentTetromino.stateOfTetromino.length; i++) {
+//            for (int j = 0; j < currentTetromino.stateOfTetromino[i].length; j++) {
+//                if (currentTetromino.stateOfTetromino[i][j] != 0) {
+//                    if(grid[i+1][j] == 1) {
+//                        collisionOccurred = true;
+//                    }
+//
+//                    //TODO: write logic for collision with other shapes
+//                }
+//            }
+//        }
         return collisionOccurred;
     }
 
-    public String toString() {
-        return "This board has height of " + height +
-                " and a width of " + width;
+
+
+    public void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
+        for (int i = 0; i <= this.height; i++) {
+            graphics.drawLine(0, squareSize * i, this.width * squareSize, i * squareSize);
+        }
+
+        for (int i = 0; i <= this.width; i++) {
+            graphics.drawLine(i * squareSize, 0, i * squareSize, this.height * squareSize);
+
+        }
+
+
+        for(int i = 0; i < currentTetromino.getStateOfTetromino().length; i++) {
+            for(int j = 0; j < currentTetromino.getStateOfTetromino()[i].length; j++) {
+                if(currentTetromino.getStateOfTetromino()[i][j] == 1) {
+                    graphics.setColor(Color.BLACK);
+                    graphics.fillRect((j + this.currentTetromino.currShapeX-1) * squareSize,  (i + this.currentTetromino.currShapeY-1) * squareSize , squareSize, squareSize);
+                    //TODO: had i and j
+                }
+            }
+        }
+
+//        graphics.setColor(Color.BLACK);
+//        graphics.fillRect(this.currShapeX * squareSize, this.currShapeY * squareSize, squareSize ,squareSize);
+//            for(int row = 0; row < this.height; row++) {
+//                for(int col = 0; col < this.width; col++) {
+//                }
+//            }
     }
 
-    public void printBoard() {
-        for (int[] ints : grid) {
-            for (int anInt : ints) {
-                System.out.print(anInt + " ");
-            }
-            System.out.println();
+
+    @Override
+    public void actionPerformed (ActionEvent e){
+        //Moves the shapes down
+        if(!checkCollision()) {
+            this.currentTetromino.currShapeY = this.currentTetromino.currShapeY + 1;
+//            clearRows();
+            repaint();
         }
-        System.out.println();
+
     }
+
+    //TODO: Check whether the hardDrop works properly with the gui, and set the Down button for hardDrop
+    public void hardDrop() {
+        while(!checkCollision()) {
+            this.currentTetromino.currShapeY = this.currentTetromino.currShapeY +1;
+        }
+    }
+
+    public static void main(String[] args) {
+        Board board = new Board();
+        int count = 0;
+        System.out.println("Shape: "+ board.currentTetromino.shape);
+        System.out.println("Index: " + board.currentTetromino.index);
+        System.out.println("Tetromino X: " + board.currentTetromino.currShapeX);
+        System.out.println("Tetromino Y: " + board.currentTetromino.currShapeY);
+        System.out.println("Tetromino height: " + board.currentTetromino.height);
+        System.out.println("Tetromino width: " + board.currentTetromino.width);
+        while(!board.checkCollision()) {
+            board.currentTetromino.currShapeY = board.currentTetromino.currShapeY + 1;
+            count++;
+        }
+        System.out.println("Count: " + count);
+        System.out.println(board.checkCollision());
+    }
+
 
 }
+
